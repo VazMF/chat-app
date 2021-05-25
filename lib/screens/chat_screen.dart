@@ -10,7 +10,7 @@ class ChatScreen extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection('chats/GMTREDDjrF9HKHSsMF8t/messages')
             .snapshots(),
-        builder: (ctx, streamSnapshot) {
+        builder: (ctx, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
@@ -18,10 +18,10 @@ class ChatScreen extends StatelessWidget {
           }
           final documents = streamSnapshot.data.docs;
           return ListView.builder(
-            itemCount: documents.lenght,
+            itemCount: documents.length,
             itemBuilder: (ctx, i) => Container(
               padding: EdgeInsets.all(8),
-              child: Text(documents[i]['text']),
+              child: Text(streamSnapshot.data.docs[i]['text']),
             ),
           );
         },
