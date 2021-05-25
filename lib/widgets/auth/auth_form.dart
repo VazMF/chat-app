@@ -6,6 +6,7 @@ class AuthForm extends StatefulWidget {
     String password,
     String username,
     bool isLogin,
+    BuildContext context,
   ) submitFn;
 
   AuthForm(this.submitFn);
@@ -21,6 +22,7 @@ class _AuthFormState extends State<AuthForm> {
   var _userName = '';
   var _userPassword = '';
 
+
   void _trySubmit() {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
@@ -28,10 +30,11 @@ class _AuthFormState extends State<AuthForm> {
     if (isValid) {
       _formKey.currentState.save();
       widget.submitFn(
-        _userEmail,
-        _userPassword,
-        _userName, 
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(), 
         _isLogin,
+        context,
       );
     }
   }
