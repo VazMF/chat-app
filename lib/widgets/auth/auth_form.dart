@@ -4,8 +4,8 @@ class AuthForm extends StatefulWidget {
   bool isLoading;
   final void Function(
     String email,
-    String password,
     String username,
+    String password,
     bool isLogin,
     BuildContext context,
   ) submitFn;
@@ -31,8 +31,8 @@ class _AuthFormState extends State<AuthForm> {
       _formKey.currentState.save();
       widget.submitFn(
         _userEmail.trim(),
-        _userPassword.trim(),
         _userName.trim(),
+        _userPassword.trim(),
         _isLogin,
         context,
       );
@@ -91,11 +91,11 @@ class _AuthFormState extends State<AuthForm> {
                         return 'Password must be at least 7 characters long.';
                       }
                       return null;
-                    },
-                    obscureText: true,
+                    }, //obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Password',
                     ),
+                    obscureText: true,
                     onSaved: (value) {
                       _userPassword = value;
                     },
