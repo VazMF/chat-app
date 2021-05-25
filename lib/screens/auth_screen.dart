@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/auth/auth_form.dart';
@@ -10,6 +11,7 @@ class AuthScren extends StatefulWidget {
 
 class _AuthScrenState extends State<AuthScren> {
   final _auth = FirebaseAuth.instance;
+  var _isLoading = false;
 
   void _submitAuthForm(
     String email,
@@ -19,8 +21,12 @@ class _AuthScrenState extends State<AuthScren> {
     BuildContext ctx,
   ) async {
     UserCredential authResult;
+    var message = 'An error ocurred, please check your credentials';
 
     try {
+      setState(() {
+        _isLoading = true;
+      });
       if (isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
           email: email,
@@ -31,19 +37,28 @@ class _AuthScrenState extends State<AuthScren> {
           email: email,
           password: password,
         );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user.uid)
+            .set({
+          'username': username,
+          'email': email,
+        });
       }
     } on PlatformException catch (error) {
-      var message = 'An error ocurred, please check your credentials';
       if (error.message != null) {
         message = error.message;
       }
     } catch (error) {
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(error.message),
+          content: Text(message),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -51,7 +66,10 @@ class _AuthScrenState extends State<AuthScren> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: AuthForm(_submitAuthForm),
+      body: AuthForm(
+        _submitAuthForm,
+        _isLoading,
+      ),
     );
   }
 }
